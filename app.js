@@ -2,12 +2,14 @@
 require('dotenv').config();
 
 // 2. Import modules
+const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
 const Note = require('./models/note'); // ✅ Ensure this file exists and matches the filename
 
 // 3. Create Express app
 const app = express();
+app.use(cors());
 const port = process.env.PORT || 5000;
 
 // 4. Middleware to parse JSON
