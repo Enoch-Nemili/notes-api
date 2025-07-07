@@ -5,7 +5,7 @@ require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
-const Note = require('./models/note'); // ✅ Ensure this file exists and matches the filename
+const Note = require('./models/note'); // ✅ Ensure file is models/note.js
 
 // 3. Create Express app
 const app = express();
@@ -64,7 +64,7 @@ app.put('/notes/:id', async (req, res) => {
   }
 });
 
-// DELETE a note
+// ✅ DELETE a note (by MongoDB _id)
 app.delete('/notes/:id', async (req, res) => {
   try {
     const deleted = await Note.findByIdAndDelete(req.params.id);
@@ -75,7 +75,7 @@ app.delete('/notes/:id', async (req, res) => {
   }
 });
 
-// Bulk insert notes (optional feature)
+// Optional: Bulk insert
 app.post('/notes/bulk', async (req, res) => {
   try {
     const insertedNotes = await Note.insertMany(req.body);
