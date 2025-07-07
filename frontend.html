@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Notes App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    input {
+      padding: 8px;
+      margin: 4px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 8px 12px;
+      margin: 4px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    li {
+      margin-bottom: 10px;
+      background-color: #ffffff;
+      padding: 10px;
+      border-radius: 5px;
+      list-style: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    hr {
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>📒 Notes App (Connected to MongoDB)</h1>
+
+  <!-- Note Form -->
+  <h3>Add a New Note</h3>
+  <input type="text" id="noteId" placeholder="ID (optional)">
+  <input type="text" id="noteTitle" placeholder="Title">
+  <input type="text" id="noteContent" placeholder="Content">
+  <button onclick="addNote()">Add Note</button>
+
+  <hr>
+
+  <!-- Notes List -->
+  <h3>All Notes:</h3>
+  <ul id="notesList"></ul>
+
+  <!-- JavaScript to connect to backend -->
+  <script>
+    const apiUrl = 'http://localhost:5000/notes';
+
+    // Load all notes
+    async function loadNotes() {
+      const res = await fetch(apiUrl);
+      const notes = await res.json();
+
+      const list = document.getElementById('notesList');
+      list.innerHTML = '';
+
+      notes.forEach(note => {
+        const item = document.createElement('li');
+        item.innerHTML = `<b>${note._id || '(ID)'}</b>: ${note.title} - ${note.content} 
+          <button onclick="deleteNote('${note._id}')">❌ Delete</button>`;
+        list.appendChild(item);
+      });
+    }
+
+    // Add a new note
+    async function addNote() {
+      const _id = document.getElementById('noteId').value;
+      const title = document.getElementById('noteTitle').value;
+      const content = document.getElementById('noteContent').value;
+
+      const newNote = _id ? { _id, title, content } : { title, content };
+
+      await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newNote)
+      });
+
+      // Clear inputs
+      document.getElementById('noteId').value = '';
+      document.getElementById('noteTitle').value = '';
+      document.getElementById('noteContent').value = '';
+
+      loadNotes(); // reload notes
+    }
+
+    // Delete a note
+    async function deleteNote(id) {
+      await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
+      loadNotes();
+    }
+
+    // Load notes when page loads
+    window.onload = loadNotes;
+  </script>
+</body>
+</html>
