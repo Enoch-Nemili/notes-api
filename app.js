@@ -2,7 +2,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const Note = require('./models/Note');
+const Note = require('./models/note');
 
 // 2. Create Express app
 const app = express();
